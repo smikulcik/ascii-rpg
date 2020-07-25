@@ -8,11 +8,15 @@
     "gulp-concat": "x.x.x",
     "gulp-rename": "x.x.x",
     "gulp-uglify": "x.x.x",
-    "merge-stream": "x.x.x"
+    "merge-stream": "x.x.x",
+    "express": "^4.13.4",
+    "express-ws": "^1.0.0",
+    "ws": "^1.1.0"
   },
   "engine": "node 0.12.7",
   "scripts": {
-    "test": "gulp lint"
+    "test": "gulp lint",
+    "start": "gulp lint && gulp && node server.js"
   },
   "devDependencies": {
     "gulp-jshint": "^2.0.0",

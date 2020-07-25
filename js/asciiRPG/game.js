@@ -1,5 +1,6 @@
 
 var Game = function(canvasEl, game_data){
+	this.server = new Server();
 	this.modes = game_data.modes;
 	this.compositor = new Compositor(canvasEl);
 	for(var mode in this.modes){
@@ -12,10 +13,10 @@ var Game = function(canvasEl, game_data){
 				break;
 			default:
 				this.modes[mode] = new this.modes[mode](this);
-		}	
+		}
 	}
 	this.switchMode('title');
-	
+
 	// true if holding down WASD repeats presses
 	this.repeatPressMovementKeys = true;
 };
@@ -25,8 +26,8 @@ Game.prototype.run = function(){
 	if(g.activeMode)
 		g.activeMode.draw(this.compositor);
 	this.compositor.render();
-	
-	
+
+
 	gameFrame++;
 	var now = new Date();
 	if(now - start > 1000){
@@ -37,7 +38,7 @@ Game.prototype.run = function(){
 		start = now;
 		gameFrame = 0;
 	}
-	
+
 	setTimeout(function(){g.run();}, 1000/actual_fps);
 };
 
@@ -50,13 +51,13 @@ Game.prototype.switchMode = function(modeName, params){
 	if(this.modes.hasOwnProperty(modeName)){
 		if(this.activeMode && this.activeMode.onExitMode !== undefined)
 			this.activeMode.onExitMode();
-			
+
 		this.activeMode = this.modes[modeName];
-		
+
 		if(this.activeMode.onEnterMode !== undefined)
 			this.activeMode.onEnterMode(params);
-		
-		// HACK: Some sprites stop playing when you switch modes... 
+
+		// HACK: Some sprites stop playing when you switch modes...
 		// so restart them all
 		var i;
 		for(i in sprites){

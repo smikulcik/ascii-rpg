@@ -107,7 +107,7 @@ Maze.prototype.show = function() {
     var _$tmp3_end = this.width;
     for (col = 0; col < _$tmp3_end; col++) {
       if (this.grid[col][row]) {
-			
+
 				if(
 						this.top(col, row) &&
 						this.bottom(col, row) &&
@@ -416,7 +416,7 @@ Maze.prototype.ratio = function() {
 Maze.prototype.toArray = function(map){
 	if(map === undefined)
 		map = {};
-	
+
 	var out = [];
 	for (var row = 0; row < this.height; row++) {
 		out.push([]);

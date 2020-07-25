@@ -1,6 +1,7 @@
 
 var Room = function(room_data){
 
+	this.id = room_data.id;
 	this.gameObjects = [];
 
 	this.tiles = [];

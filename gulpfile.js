@@ -10,8 +10,8 @@ var jshint = require('gulp-jshint');
 
 var srcScriptsPath = 'js';
 var destScriptsPath = 'dist/js';
-    
-    
+
+
 gulp.task('clean_dist', function () {
   try{
     del(['dist/*']);
@@ -53,7 +53,8 @@ gulp.task('compile_js', ['clean_dist'], function(){
             'hud.js',
             'title_screen.js',
             'importers.js',
-            'input.js'],
+            'input.js',
+            'websocket.js'],
             { cwd: 'js/asciiRPG/' })
         .pipe(concat('asciiRPG.js'))
         .pipe(gulp.dest(destScriptsPath))

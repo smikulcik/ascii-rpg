@@ -1,23 +1,52 @@
 
-var Actor = function(actor_data){
+var Actor = function(actor_data, world){
 	GameObject.call(this, actor_data);
-
-	//this.sprite = new AnimatedSprite(sprites[actor_data.sprite], {'autostart': false});
+	if(actor_data !== undefined)
+		this.sprite = new AnimatedSprite(sprites[actor_data.sprite], {'autostart': false});
+	else
+		this.sprite = new AnimatedSprite(sprites.player, {'autostart': false});
+	this.id = -1;
 	this.x = 0;
 	this.y = 0;
-	
+
 	this.direction = DOWN;
-	
+
 	this._moving = false;
 	this._wereMoving = false;
-	
+
 	this.bag = {};
 	this.bag.items = [];
 
-	this.world = null;
+	this.world = world;
 };
 
 Actor.prototype = new GameObject();
+
+Actor.prototype.updateSelf = function(data){
+	this.id = data.id;
+	this.x = data.x;
+	this.y = data.y;
+	this.setDirection(data.direction);
+
+	//enter room
+	for(var r in this.world.data.rooms){
+		if(this.world.data.rooms[r].id === data.room){
+			this.room = this.world.data.rooms[r];
+			this.room.add(world.player);
+		}
+	}
+};
+
+Actor.prototype.toJSON = function(){
+	var out = {
+		"id": this.id,
+		"x": this.x,
+		"y": this.y,
+		"direction": this.direction,
+		"room": this.room.id
+	};
+	return out;
+};
 
 Actor.prototype.setDirection = function(direction){
 	this.direction = direction;
@@ -56,8 +85,8 @@ Actor.prototype.move = function(direction, _countdown){
 
 	var actor = this;
 	if(!actor._moving || _countdown !== undefined){
-		
-		
+
+
 		//change direction if needed immediately
 		if(this.direction !== direction){
 			this.setDirection(direction);
@@ -66,13 +95,13 @@ Actor.prototype.move = function(direction, _countdown){
 			}
 			return;
 		}
-	
+
 		if(_countdown === undefined){ //first call to move
 			if(!this.canMove(direction))
 				return;
 			_countdown = 5;
 		}
-		
+
 		//move if allowed
 		actor.setMoving(true);
 		if(_countdown > 0){ // general case
@@ -111,7 +140,7 @@ Actor.prototype.move = function(direction, _countdown){
 
 Actor.prototype.handleInput = function(key){
 	// basic WASD movement
-    
+
 	switch(key){
         case 38: //up arrow
 		case 87: //up 'w'
@@ -140,7 +169,7 @@ Actor.prototype.handleInput = function(key){
 };
 
 Actor.prototype.nextObject = function(){
-	
+
 	var x;
 	var y;
 	switch(this.direction){
@@ -182,4 +211,6 @@ Actor.prototype.inspect = function(){
 Actor.prototype.enterRoom = function(room){
 	this.x = room.defaultSpawnLoc[0]*TILE_WIDTH;
 	this.y = room.defaultSpawnLoc[1]*TILE_HEIGHT;
+	this.room = room;
+	this.world.game.server.send("updatePlayer", this);
 };

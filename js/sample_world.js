@@ -84,12 +84,12 @@ var gameObjects = {
 					}
 				}
 				hud.addMessage("It's a lock");
-				if(keyOb_i >= 0){	
+				if(keyOb_i >= 0){
 					hud.prompt("Do you want to unlock it with your key?", function(resp){
 						switch(resp){
 							case "YES":
 								keyObj.use(actor);
-								
+
 								// remove single use items
 								if(keyObj.singleUse === true)
 									actor.bag.items.splice(keyOb_i, 1);
@@ -235,21 +235,21 @@ gameObjects.star3.name = "star3";
 
 var BagMode = function(game){
 	this.selectMode = 'category';
-	
+
 	this.selectedCategory = -1;
 	this.categories = [];
-	
+
 	this.selectedItem = -1;
 	this.items = [];
-	
-	this.game = game;	
+
+	this.game = game;
 };
 
 BagMode.prototype.draw = function(compositor){
 	var box = generateBox(SCREEN_WIDTH, SCREEN_HEIGHT);
 	compositor.clearFrame();
 	compositor.addText("BAG", 2, 2);
-	
+
 	if(this.selectMode === 'category')
 		compositor.addText("[Category:]", 2, 5);
 	else
@@ -263,7 +263,7 @@ BagMode.prototype.draw = function(compositor){
 		}
 		i += 2;
 	}
-	
+
 	if(this.selectMode === 'item')
 		compositor.addText("[Item:]", 50, 5);
 	else
@@ -277,7 +277,7 @@ BagMode.prototype.draw = function(compositor){
 			compositor.addText("  " + item.name, 50, i);
 		i += 2;
 	}
-	
+
 	compositor.add(box.split('\n'), box.split('\n'), 0,0);
 };
 
@@ -325,7 +325,7 @@ BagMode.prototype.handleInput = function(key){
 				if(this.selectedItem >= 0){
 					if(this.items[this.selectedItem].hasOwnProperty('use')){
 						var used = this.items[this.selectedItem].use(this.actor);
-						
+
 						// remove single use items
 						if(used && this.items[this.selectedItem].singleUse === true){
 							this.items.splice(this.selectedItem, 1);
@@ -345,11 +345,11 @@ BagMode.prototype.handleInput = function(key){
 			break;
 	}
 };
- 
+
 BagMode.prototype.onEnterMode = function(params){
 	this.actor = params.actor;
 	this.bag = this.actor.bag;
-	
+
 	this.categories = Object.keys(this.bag);
 	if(this.categories.length > 0){
 		this.selectedCategory = 0;
@@ -382,9 +382,9 @@ mazeTiles.push(last_row);
 for(var endpoint in maze.endpoints){
 	var rand = Math.random();
 	if(rand < 0.30)
-		mazeTiles[maze.endpoints[endpoint][1]][maze.endpoints[endpoint][0]] = "potion";	
+		mazeTiles[maze.endpoints[endpoint][1]][maze.endpoints[endpoint][0]] = "potion";
 	else if(rand < 0.6)
-		mazeTiles[maze.endpoints[endpoint][1]][maze.endpoints[endpoint][0]] = "spinner";	
+		mazeTiles[maze.endpoints[endpoint][1]][maze.endpoints[endpoint][0]] = "spinner";
 	else
 		mazeTiles[maze.endpoints[endpoint][1]][maze.endpoints[endpoint][0]] = "empty";
 }
@@ -396,6 +396,7 @@ var gameData = {
 				rooms: [
 					{
 						name:"demo",
+						id:1,
 						tiles: [
 							["water","water","water","water","water","water","water","water","water","water","water","water","water","water","water","water"],
 							["water","water","water","water","water","water","water","water","water","water","water","water","water","water","water","water"],
@@ -427,15 +428,18 @@ var gameData = {
 					},
 					{
 						name:"maze",
+						id:2,
 						tiles: mazeTiles,
 						defaultSpawnLoc: [Math.floor(maze_width/2), 1],
 					},
 					{
 						name:"tmx_room",
+						id:3,
 						url: "\\res\\test_sheet.tmx",
 					},
 					{
 						name:"tmx_test",
+						id:4,
 						url: "\\res\\tmx_test.tmx",
 					}
 				],

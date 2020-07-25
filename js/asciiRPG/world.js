@@ -1,5 +1,6 @@
 
 var World = function(world_data, game){
+	var that = this;
 	this.game = game;
 	if(world_data === undefined){
 		world_data = {
@@ -25,17 +26,80 @@ var World = function(world_data, game){
 			}
 		};
 	}
-	
+
 	this.data = world_data;
-	this.player = new Actor(gameObjects[world_data.player]);
+	this.player = new Actor(gameObjects[world_data.player], this);
 	this.player.world = this;
+
+	this.game.server.setupConnection();
+	this.game.server.setOnMessage(function onmessage(type, data){
+		try{
+			if(type === "authResponse"){
+					player = data;
+					that.player.updateSelf(player);
+
+					//enter room
+					for(var r in world_data.rooms){
+						if(world_data.rooms[r].id === that.player.room){
+							that.setRoomNow(world_data.rooms[r].name);
+						}
+					}
+			}
+			if(type === "updateAllPlayers"){
+				console.log(data);
+				var p, myp, hasFound;
+				for(p in data){
+					//update existing players
+					hasFound = false;
+					for(myp in that.players){
+						if(data[p].id === that.players[myp].id){
+							that.players[myp].updateSelf(data[p]);
+							hasFound = true;
+							console.log("UPDATE EXISTING");
+						}
+					}
+					//add new player
+					if(!hasFound){
+						var newPlayer = new Actor(undefined, that);
+						newPlayer.updateSelf(data[p]);
+						that.players.push(newPlayer);
+						console.log("ADD NEW");
+					}
+				}
+
+				//remove old players
+				for(myp in that.players){
+					hasFound = false;
+					for(p in data){
+						if(data[p].id === that.players[myp].id){
+							hasFound = true;
+						}
+					}
+					//TODO: Check to see if changing the array is a problem
+					if(!hasFound){
+						that.players.pop(myp);
+						console.log("REMOVE OLD");
+					}
+				}
+
+			}
+
+		}catch(err){
+				console.error(err);
+		}
+	});
+
+
+	this.players = [this.player];
+
+	//enter room
 	this.setRoomNow(world_data.rooms[0].name);
 	if(this.room.hasOwnProperty('music'))
 		this.music = new AudioLoop(this.room.music);
 	else
 		this.music = undefined;
-	
-	
+
+
 	this.hud = new HUD(this, game);
 };
 
